@@ -1,19 +1,3 @@
-# Represents a network asset
-
-# Stores:
-# - id
-# - name
-# - type
-# - vulnerability_score
-# - criticality_score
-# - asset_value
-
-# Example:
-# Database Server
-# vulnerability = 8
-# criticality = 9
-# asset_value = 10
-
 class Node:
     def __init__(
         self,
@@ -40,3 +24,9 @@ class Node:
 
     def __str__(self):
         return f"{self.name} ({self.type})"
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
