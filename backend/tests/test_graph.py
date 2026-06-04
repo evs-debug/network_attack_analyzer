@@ -31,10 +31,18 @@ database = Node(
     9,
     10
 )
-
+domain_controller = Node(
+    4,
+    "Domain Controller",
+    "Domain Controller",
+    7,
+    10,
+    10
+)
 graph.add_node(internet)
 graph.add_node(web_server)
 graph.add_node(database)
+graph.add_node(domain_controller)
 
 graph.add_edge(
     Edge(
@@ -53,5 +61,14 @@ graph.add_edge(
         2
     )
 )
-
+graph.add_edge(
+    Edge(
+        database,
+        domain_controller,
+        "LDAP",
+        3
+    )
+)
 graph.display_network()
+
+graph.bfs(internet)
