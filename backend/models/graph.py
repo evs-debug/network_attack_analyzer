@@ -38,3 +38,22 @@ class AttackGraph:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append(neighbor)
+
+
+    def dfs(self, start_node):
+        visited = set()
+
+        print("\nAttack Paths (DFS):")
+
+        self._dfs_recursive(start_node, visited)
+
+
+    def _dfs_recursive(self, node, visited):
+        visited.add(node)
+
+        print(node)
+    
+        for neighbor in self.adjacency_list[node]:
+            if neighbor not in visited:
+                self._dfs_recursive(neighbor, visited)
+

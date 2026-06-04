@@ -39,10 +39,21 @@ domain_controller = Node(
     10,
     10
 )
+
+vpn_gateway = Node(
+    5,
+    "VPN Gateway",
+    "Gateway",
+    6,
+    7,
+    6
+)
+
 graph.add_node(internet)
 graph.add_node(web_server)
 graph.add_node(database)
 graph.add_node(domain_controller)
+graph.add_node(vpn_gateway)
 
 graph.add_edge(
     Edge(
@@ -69,6 +80,28 @@ graph.add_edge(
         3
     )
 )
+
+graph.add_edge(
+    Edge(
+        internet,
+        vpn_gateway,
+        "VPN",
+        2
+    )
+)
+
+graph.add_edge(
+    Edge(
+        vpn_gateway,
+        domain_controller,
+        "RDP",
+        2
+    )
+)
 graph.display_network()
 
 graph.bfs(internet)
+
+graph.dfs(internet)
+
+graph.add_node(vpn_gateway)
