@@ -30,3 +30,6 @@ class Node:
 
     def __eq__(self, other):
         return self.id == other.id
+
+    def get_risk_score(self):
+        return self.calculate_risk()

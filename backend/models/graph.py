@@ -134,4 +134,31 @@ class AttackGraph:
         for node, cost in distances.items():
             print(node, "=", cost)
 
-        
+    def risk_report(self):
+
+        print("\nRisk Report:")
+
+        for node in self.nodes:
+
+            print(
+                node.name,
+                "- Risk Score:",
+                node.get_risk_score()
+            )
+    def highest_risk_asset(self):
+
+        highest = max(
+            self.nodes,
+            key=lambda node:
+            node.get_risk_score()
+        )
+
+        print(
+            "\nHighest Risk Asset:"
+        )
+
+        print(
+            highest.name,
+            "-",
+            highest.get_risk_score()
+        )

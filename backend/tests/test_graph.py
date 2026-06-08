@@ -111,3 +111,8 @@ graph.dijkstra(
     internet,
     domain_controller
 )
+print("\nSecurity Analysis")
+
+graph.risk_report()
+
+graph.highest_risk_asset()
