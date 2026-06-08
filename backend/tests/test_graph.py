@@ -116,3 +116,7 @@ print("\nSecurity Analysis")
 graph.risk_report()
 
 graph.highest_risk_asset()
+
+graph.critical_node_report()
+
+graph.most_critical_node()

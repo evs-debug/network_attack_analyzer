@@ -162,3 +162,52 @@ class AttackGraph:
             "-",
             highest.get_risk_score()
         )
+
+    def count_reachable_nodes(self, start_node):
+        visited = set()
+        queue = [start_node]
+
+        visited.add(start_node)
+
+        while queue:
+            current_node = queue.pop(0)
+
+            for neighbor in self.adjacency_list[current_node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+        return len(visited) - 1
+
+    def critical_node_report(self):
+
+        print("\nCritical Node Report:")
+
+        for node in self.nodes:
+
+            impact = self.count_reachable_nodes(node)
+
+            print(
+                node.name,
+                "- Reachable Assets:",
+                impact
+            )
+
+    def most_critical_node(self):
+
+        critical = max(
+            self.nodes,
+            key=lambda node:
+            self.count_reachable_nodes(node)
+        )
+
+        print(
+            "\nMost Critical Node:"
+        )
+
+        print(
+            critical.name,
+            "- Impact:",
+            self.count_reachable_nodes(critical)
+        )
+            
