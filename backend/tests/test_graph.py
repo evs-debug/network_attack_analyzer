@@ -104,4 +104,10 @@ graph.bfs(internet)
 
 graph.dfs(internet)
 
-graph.add_node(vpn_gateway)
+
+print("\nDijkstra Traversal:")
+
+graph.dijkstra(
+    internet,
+    domain_controller
+)

@@ -1,3 +1,4 @@
+import heapq
 class AttackGraph:
     def __init__(self):
         self.nodes = []
@@ -57,3 +58,80 @@ class AttackGraph:
             if neighbor not in visited:
                 self._dfs_recursive(neighbor, visited)
 
+    def dijkstra(self, start_node, target_node):
+        distances = {}
+        previous = {}
+
+        for node in self.nodes:
+            distances[node] = float("inf")
+
+        distances[start_node] = 0
+
+        priority_queue = [
+            (0, start_node)
+        ]
+
+        while priority_queue:
+            current_distance, current_node = heapq.heappop(
+                priority_queue
+            )
+            if current_distance > distances[current_node]:
+                continue
+            print(
+                current_node,
+                "cost:",
+                current_distance
+            )
+            for edge in self.edges:
+                if edge.source == current_node:
+
+                    neighbor = edge.target
+
+                    new_distance = (
+                        current_distance
+                        + edge.access_level
+                    )
+
+                    if new_distance < distances[neighbor]:
+
+                        distances[neighbor] = new_distance
+
+                        previous[neighbor] = current_node
+
+                        heapq.heappush(
+                            priority_queue,
+                            (
+                                new_distance,
+                                neighbor
+                            )
+                        )
+            
+
+       
+        if target_node not in previous and target_node != start_node:
+            print("\nNo attack path found.")
+            return
+        path = []
+
+        current = target_node
+
+        while current != start_node:
+            path.append(current)
+            current = previous[current]
+
+        path.append(start_node)
+
+        path.reverse()
+
+        print("\nShortest Attack Path:")
+        
+
+        for node in path:
+            print(node)
+         
+        print("\nShortest Costs:")
+
+        for node, cost in distances.items():
+            print(node, "=", cost)
+
+        
