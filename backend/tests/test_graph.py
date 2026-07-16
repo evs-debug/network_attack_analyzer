@@ -1,103 +1,33 @@
 from backend.models.node import Node
+
 from backend.models.edge import Edge
+
 from backend.models.graph import AttackGraph
 
+from backend.sample_networks.sample_network import (
 
-graph = AttackGraph()
+    create_sample_network
 
-internet = Node(
-    1,
-    "Internet",
-    "Internet",
-    1,
-    1,
-    1
 )
 
-web_server = Node(
-    2,
-    "Web Server",
-    "Server",
-    8,
-    7,
-    8
-)
 
-database = Node(
-    3,
-    "Database",
-    "Database",
-    8,
-    9,
-    10
-)
-domain_controller = Node(
-    4,
-    "Domain Controller",
-    "Domain Controller",
-    7,
-    10,
-    10
-)
 
-vpn_gateway = Node(
-    5,
-    "VPN Gateway",
-    "Gateway",
-    6,
-    7,
-    6
-)
+(
 
-graph.add_node(internet)
-graph.add_node(web_server)
-graph.add_node(database)
-graph.add_node(domain_controller)
-graph.add_node(vpn_gateway)
+    graph,
 
-graph.add_edge(
-    Edge(
-        internet,
-        web_server,
-        "HTTPS",
-        1
-    )
-)
+    internet,
 
-graph.add_edge(
-    Edge(
-        web_server,
-        database,
-        "SQL",
-        2
-    )
-)
-graph.add_edge(
-    Edge(
-        database,
-        domain_controller,
-        "LDAP",
-        3
-    )
-)
+    web_server,
 
-graph.add_edge(
-    Edge(
-        internet,
-        vpn_gateway,
-        "VPN",
-        2
-    )
-)
+    database,
 
-graph.add_edge(
-    Edge(
-        vpn_gateway,
-        domain_controller,
-        "RDP",
-        2
-    )
-)
+    domain_controller,
+
+    vpn_gateway
+
+) = create_sample_network()
+
 graph.display_network()
 
 graph.bfs(internet)
