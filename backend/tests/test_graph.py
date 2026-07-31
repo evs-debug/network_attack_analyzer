@@ -21,7 +21,6 @@ from backend.sample_networks.sample_network import (
     web_server,
 
     database,
-
     domain_controller,
 
     vpn_gateway
@@ -43,7 +42,16 @@ graph.dijkstra(
 )
 print("\nSecurity Analysis")
 
-graph.risk_report()
+risk_report = graph.risk_report()
+
+print("\nRisk Report:")
+
+for asset in risk_report:
+    print(
+        asset["name"],
+        "- Risk Score:",
+        asset["risk_score"]
+    )
 
 graph.highest_risk_asset()
 

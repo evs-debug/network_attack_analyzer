@@ -136,15 +136,19 @@ class AttackGraph:
 
     def risk_report(self):
 
-        print("\nRisk Report:")
+        report = []
 
         for node in self.nodes:
 
-            print(
-                node.name,
-                "- Risk Score:",
-                node.get_risk_score()
+            report.append(
+                {
+                    "name": node.name,
+                    "type": node.type,
+                    "risk_score": node.get_risk_score()
+                }
             )
+
+        return report
     def highest_risk_asset(self):
 
         highest = max(
