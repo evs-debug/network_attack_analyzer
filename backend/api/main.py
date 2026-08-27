@@ -60,3 +60,20 @@ def shortest_path(start: str, target: str):
         return {"error": "No path found"}
 
     return result
+
+@app.get("/critical-nodes")
+def critical_nodes():
+
+    (
+        graph,
+        internet,
+        web_server,
+        database,
+        domain_controller,
+        vpn_gateway
+    ) = create_sample_network()
+
+    return {
+        "report": graph.critical_node_report_data(),
+        "most_critical": graph.most_critical_node_data()
+    }
