@@ -31,3 +31,32 @@ def risk_report():
     ) = create_sample_network()
 
     return graph.risk_report()
+
+@app.get("/shortest-path")
+def shortest_path(start: str, target: str):
+
+    (
+        graph,
+        internet,
+        web_server,
+        database,
+        domain_controller,
+        vpn_gateway
+    ) = create_sample_network()
+
+    nodes_by_name = {}
+    for node in graph.nodes:
+        nodes_by_name[node.name] = node
+
+    start_node = nodes_by_name.get(start)
+    target_node = nodes_by_name.get(target)
+
+    if not start_node or not target_node:
+        return {"error": "Invalid start or target node name"}
+
+    result = graph.shortest_path(start_node, target_node)
+
+    if result is None:
+        return {"error": "No path found"}
+
+    return result
