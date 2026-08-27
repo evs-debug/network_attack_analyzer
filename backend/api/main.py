@@ -77,3 +77,17 @@ def critical_nodes():
         "report": graph.critical_node_report_data(),
         "most_critical": graph.most_critical_node_data()
     }
+
+@app.get("/network")
+def network():
+
+    (
+        graph,
+        internet,
+        web_server,
+        database,
+        domain_controller,
+        vpn_gateway
+    ) = create_sample_network()
+
+    return graph.network_data()

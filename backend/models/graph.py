@@ -308,4 +308,40 @@ class AttackGraph:
             "name": critical.name,
             "impact": self.count_reachable_nodes(critical)
         }
-                    
+
+    def network_data(self):
+
+        nodes_data = []
+
+        for node in self.nodes:
+
+            nodes_data.append(
+                {
+                    "id": node.id,
+                    "name": node.name,
+                    "type": node.type,
+                    "vulnerability_score": node.vulnerability_score,
+                    "criticality_score": node.criticality_score,
+                    "asset_value": node.asset_value,
+                    "risk_score": node.get_risk_score()
+                }
+            )
+
+        edges_data = []
+
+        for edge in self.edges:
+
+            edges_data.append(
+                {
+                    "source": edge.source.name,
+                    "target": edge.target.name,
+                    "connection_type": edge.connection_type,
+                    "access_level": edge.access_level
+                }
+            )
+
+        return {
+            "nodes": nodes_data,
+            "edges": edges_data
+        }
+                        
