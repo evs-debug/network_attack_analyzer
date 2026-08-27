@@ -1,74 +1,60 @@
 from backend.models.node import Node
+
 from backend.models.edge import Edge
+
 from backend.models.graph import AttackGraph
 
+from backend.sample_networks.sample_network import (
 
-graph = AttackGraph()
+    create_sample_network
 
-internet = Node(
-    1,
-    "Internet",
-    "Internet",
-    1,
-    1,
-    1
 )
 
-web_server = Node(
-    2,
-    "Web Server",
-    "Server",
-    8,
-    7,
-    8
-)
 
-database = Node(
-    3,
-    "Database",
-    "Database",
-    8,
-    9,
-    10
-)
-domain_controller = Node(
-    4,
-    "Domain Controller",
-    "Domain Controller",
-    7,
-    10,
-    10
-)
-graph.add_node(internet)
-graph.add_node(web_server)
-graph.add_node(database)
-graph.add_node(domain_controller)
 
-graph.add_edge(
-    Edge(
-        internet,
-        web_server,
-        "HTTPS",
-        1
-    )
-)
+(
 
-graph.add_edge(
-    Edge(
-        web_server,
-        database,
-        "SQL",
-        2
-    )
-)
-graph.add_edge(
-    Edge(
-        database,
-        domain_controller,
-        "LDAP",
-        3
-    )
-)
+    graph,
+
+    internet,
+
+    web_server,
+
+    database,
+    domain_controller,
+
+    vpn_gateway
+
+) = create_sample_network()
+
 graph.display_network()
 
 graph.bfs(internet)
+
+graph.dfs(internet)
+
+
+print("\nDijkstra Traversal:")
+
+graph.dijkstra(
+    internet,
+    domain_controller
+)
+print("\nSecurity Analysis")
+
+risk_report = graph.risk_report()
+
+print("\nRisk Report:")
+
+for asset in risk_report:
+    print(
+        asset["name"],
+        "- Risk Score:",
+        asset["risk_score"]
+    )
+
+graph.highest_risk_asset()
+
+graph.critical_node_report()
+
+graph.most_critical_node()

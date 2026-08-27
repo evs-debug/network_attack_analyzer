@@ -1,13 +1,3 @@
-# Represents a connection between two nodes
-
-# Stores:
-# - source
-# - target
-# - connection_type
-# - access_level
-
-# Example:
-# Web Server -> Database
 class Edge:
     def __init__(
         self,
