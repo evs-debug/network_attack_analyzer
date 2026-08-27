@@ -278,4 +278,34 @@ class AttackGraph:
             "cost": distances[target_node],
             "path": [node.name for node in path]
         }
-                
+
+    def critical_node_report_data(self):
+
+        report = []
+
+        for node in self.nodes:
+
+            impact = self.count_reachable_nodes(node)
+
+            report.append(
+                {
+                    "name": node.name,
+                    "reachable_assets": impact
+                }
+            )
+
+        return report
+
+    def most_critical_node_data(self):
+
+        critical = max(
+            self.nodes,
+            key=lambda node:
+            self.count_reachable_nodes(node)
+        )
+
+        return {
+            "name": critical.name,
+            "impact": self.count_reachable_nodes(critical)
+        }
+                    
