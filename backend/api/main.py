@@ -1,4 +1,13 @@
 from fastapi import FastAPI, HTTPException
+from typing import List
+
+from backend.models.schemas import (
+    HomeResponse,
+    RiskReportItem,
+    ShortestPathResponse,
+    CriticalNodesResponse,
+    NetworkResponse,
+)
 
 from backend.sample_networks.sample_network import (
     create_sample_network
@@ -10,7 +19,7 @@ app = FastAPI(
 )
 
 
-@app.get("/")
+@app.get("/", response_model=HomeResponse)
 def home():
     return {
         "message": "Network Attack Analyzer API",
@@ -18,7 +27,7 @@ def home():
     }
 
 
-@app.get("/risk-report")
+@app.get("/risk-report", response_model=List[RiskReportItem])
 def risk_report():
 
     (
@@ -32,7 +41,7 @@ def risk_report():
 
     return graph.risk_report()
 
-@app.get("/shortest-path")
+@app.get("/shortest-path", response_model=ShortestPathResponse)
 def shortest_path(start: str, target: str):
 
     (
@@ -61,7 +70,7 @@ def shortest_path(start: str, target: str):
 
     return result
 
-@app.get("/critical-nodes")
+@app.get("/critical-nodes", response_model=CriticalNodesResponse)
 def critical_nodes():
 
     (
@@ -78,7 +87,7 @@ def critical_nodes():
         "most_critical": graph.most_critical_node_data()
     }
 
-@app.get("/network")
+@app.get("/network", response_model=NetworkResponse)
 def network():
 
     (
