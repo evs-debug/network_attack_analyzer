@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from backend.sample_networks.sample_network import (
     create_sample_network
@@ -52,12 +52,12 @@ def shortest_path(start: str, target: str):
     target_node = nodes_by_name.get(target)
 
     if not start_node or not target_node:
-        return {"error": "Invalid start or target node name"}
+        raise HTTPException(status_code=404, detail=f"Invalid start or target node name: start={start!r}, target={target!r}")
 
     result = graph.shortest_path(start_node, target_node)
 
     if result is None:
-        return {"error": "No path found"}
+        raise HTTPException(status_code=404, detail=f"No path found between {start!r} and {target!r}")
 
     return result
 
