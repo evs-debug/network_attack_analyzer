@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from typing import List
 
 from backend.models.schemas import (
@@ -42,7 +42,10 @@ def risk_report():
     return graph.risk_report()
 
 @app.get("/shortest-path", response_model=ShortestPathResponse)
-def shortest_path(start: str, target: str):
+def shortest_path(
+    start: str = Query(..., min_length=1, description="Name of the starting node"),
+    target: str = Query(..., min_length=1, description="Name of the target node"),
+):
 
     (
         graph,

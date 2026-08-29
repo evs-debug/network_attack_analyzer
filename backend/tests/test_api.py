@@ -53,3 +53,15 @@ def test_shortest_path_valid_nodes():
 
     response = client.get("/shortest-path", params={"start": node_names[0], "target": node_names[-1]})
     assert response.status_code in (200, 404)  # 404 is valid if genuinely no path exists
+
+
+def test_shortest_path_empty_string_params():
+    # Query(min_length=1) should reject these with 422 before our
+    # node-lookup code even runs -- an empty string used to sail
+    # through as a technically-present param and only get caught
+    # later by the 404 node-lookup check.
+    response = client.get("/shortest-path", params={"start": "", "target": "Database"})
+    assert response.status_code == 422
+
+    response = client.get("/shortest-path", params={"start": "Internet", "target": ""})
+    assert response.status_code == 422
