@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
 from backend.models.schemas import (
@@ -16,6 +17,16 @@ from backend.sample_networks.sample_network import (
 app = FastAPI(
     title="Network Attack Analyzer API",
     version="0.4.0"
+)
+
+# Allow the local Vite dev server (and the common alternate port) to
+# call this API directly from the browser. Tighten this list before
+# any real deployment -- wildcard/dev origins should never ship.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
 )
 
 
