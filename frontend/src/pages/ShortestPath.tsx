@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { api, ApiRequestError } from '../api/client';
 import type { NetworkNode, ShortestPathResponse } from '../api/types';
 
+const selectClass =
+  'rounded-md border border-panel-border bg-canvas px-3 py-2 font-mono text-sm text-text-primary focus:border-accent focus:outline-none';
+
 export default function ShortestPath() {
   const [nodes, setNodes] = useState<NetworkNode[]>([]);
   const [start, setStart] = useState('');
@@ -41,33 +44,42 @@ export default function ShortestPath() {
 
   return (
     <div>
-      <h1>Shortest Attack Path</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
-        <label>
+      <h1 className="mb-6 text-xl font-semibold text-text-primary">Shortest Attack Path</h1>
+
+      <form onSubmit={handleSubmit} className="mb-6 flex items-end gap-4 rounded-lg border border-panel-border bg-panel p-4">
+        <label className="flex flex-col gap-1 text-sm text-text-muted">
           Start
-          <br />
-          <select value={start} onChange={(e) => setStart(e.target.value)}>
+          <select value={start} onChange={(e) => setStart(e.target.value)} className={selectClass}>
             {nodes.map((n) => <option key={n.id} value={n.name}>{n.name}</option>)}
           </select>
         </label>
-        <label>
+        <label className="flex flex-col gap-1 text-sm text-text-muted">
           Target
-          <br />
-          <select value={target} onChange={(e) => setTarget(e.target.value)}>
+          <select value={target} onChange={(e) => setTarget(e.target.value)} className={selectClass}>
             {nodes.map((n) => <option key={n.id} value={n.name}>{n.name}</option>)}
           </select>
         </label>
-        <button type="submit" disabled={loading || !start || !target}>
-          {loading ? 'Finding...' : 'Find Path'}
+        <button
+          type="submit"
+          disabled={loading || !start || !target}
+          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-canvas transition-opacity hover:opacity-90 disabled:opacity-40"
+        >
+          {loading ? 'Finding...' : 'Find path'}
         </button>
       </form>
 
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {error && (
+        <p className="rounded-md border border-risk-high/30 bg-risk-high/10 px-4 py-3 text-sm text-risk-high">
+          {error}
+        </p>
+      )}
 
       {result && (
-        <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8, padding: '1rem' }}>
-          <p><strong>Cost:</strong> {result.cost}</p>
-          <p><strong>Path:</strong> {result.path.join(' → ')}</p>
+        <div className="rounded-lg border border-risk-low/30 bg-risk-low/10 px-4 py-3">
+          <p className="text-sm text-text-muted">
+            Cost <span className="font-mono text-risk-low">{result.cost}</span>
+          </p>
+          <p className="mt-1 font-mono text-text-primary">{result.path.join(' → ')}</p>
         </div>
       )}
     </div>
