@@ -4,29 +4,37 @@ import CriticalNodes from './pages/CriticalNodes';
 import ShortestPath from './pages/ShortestPath';
 import NetworkGraph from './pages/NetworkGraph';
 
-const navStyle = ({ isActive }: { isActive: boolean }) => ({
-  marginRight: '1rem',
-  fontWeight: isActive ? 700 : 400,
-  color: isActive ? '#059669' : '#475569',
-  textDecoration: 'none',
-});
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `block rounded-md px-3 py-2 text-sm transition-colors ${
+    isActive
+      ? 'bg-accent/15 text-accent font-medium'
+      : 'text-text-muted hover:text-text-primary hover:bg-panel-border/40'
+  }`;
 
 function App() {
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '2rem', fontFamily: 'system-ui, sans-serif' }}>
-      <nav style={{ marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '2px solid #eee' }}>
-        <NavLink to="/" end style={navStyle}>Risk Report</NavLink>
-        <NavLink to="/critical-nodes" style={navStyle}>Critical Nodes</NavLink>
-        <NavLink to="/shortest-path" style={navStyle}>Shortest Path</NavLink>
-        <NavLink to="/network" style={navStyle}>Network Graph</NavLink>
-      </nav>
+    <div className="flex min-h-screen">
+      <aside className="w-56 shrink-0 border-r border-panel-border bg-panel px-4 py-6">
+        <div className="mb-6 px-3">
+          <p className="font-mono text-xs tracking-wide text-text-muted">SECURITY ANALYSIS</p>
+          <h1 className="text-lg font-semibold text-text-primary">Network Attack Analyzer</h1>
+        </div>
+        <nav className="flex flex-col gap-1">
+          <NavLink to="/" end className={navLinkClass}>Risk Report</NavLink>
+          <NavLink to="/critical-nodes" className={navLinkClass}>Critical Nodes</NavLink>
+          <NavLink to="/shortest-path" className={navLinkClass}>Shortest Path</NavLink>
+          <NavLink to="/network" className={navLinkClass}>Network Graph</NavLink>
+        </nav>
+      </aside>
 
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/critical-nodes" element={<CriticalNodes />} />
-        <Route path="/shortest-path" element={<ShortestPath />} />
-        <Route path="/network" element={<NetworkGraph />} />
-      </Routes>
+      <main className="flex-1 overflow-auto p-8">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/critical-nodes" element={<CriticalNodes />} />
+          <Route path="/shortest-path" element={<ShortestPath />} />
+          <Route path="/network" element={<NetworkGraph />} />
+        </Routes>
+      </main>
     </div>
   );
 }
