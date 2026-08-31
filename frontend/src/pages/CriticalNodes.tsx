@@ -16,34 +16,44 @@ export default function CriticalNodes() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Loading critical node report...</p>;
-  if (error) return <p style={{ color: 'crimson' }}>Error: {error}</p>;
+  if (loading) return <p className="text-text-muted">Loading critical node report...</p>;
+  if (error) return <p className="text-risk-high">Error: {error}</p>;
   if (!data) return null;
 
   const sorted = [...data.report].sort((a, b) => b.reachable_assets - a.reachable_assets);
 
   return (
     <div>
-      <h1>Critical Node Report</h1>
-      <div style={{ background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: 8, padding: '1rem', marginBottom: '1.5rem' }}>
-        <strong>Most Critical Node:</strong> {data.most_critical.name} — impact: {data.most_critical.impact} reachable assets
+      <h1 className="mb-6 text-xl font-semibold text-text-primary">Critical Node Report</h1>
+
+      <div className="mb-6 rounded-lg border border-risk-mid/30 bg-risk-mid/10 px-4 py-3">
+        <p className="text-sm text-text-muted">Most critical node</p>
+        <p className="mt-1">
+          <span className="font-mono text-base text-text-primary">{data.most_critical.name}</span>
+          <span className="ml-2 text-sm text-text-muted">
+            — impact: <span className="text-risk-mid">{data.most_critical.impact}</span> reachable assets
+          </span>
+        </p>
       </div>
-      <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid #ccc', padding: '0.5rem' }}>Node</th>
-            <th style={{ textAlign: 'right', borderBottom: '2px solid #ccc', padding: '0.5rem' }}>Reachable Assets</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((item) => (
-            <tr key={item.name}>
-              <td style={{ padding: '0.5rem', borderBottom: '1px solid #eee' }}>{item.name}</td>
-              <td style={{ padding: '0.5rem', borderBottom: '1px solid #eee', textAlign: 'right' }}>{item.reachable_assets}</td>
+
+      <div className="overflow-hidden rounded-lg border border-panel-border">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-panel-border bg-panel">
+              <th className="px-4 py-3 text-left text-sm font-medium text-text-muted">Node</th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-text-muted">Reachable Assets</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sorted.map((item) => (
+              <tr key={item.name} className="border-b border-panel-border bg-panel/40 last:border-b-0">
+                <td className="px-4 py-3 font-mono text-sm text-text-primary">{item.name}</td>
+                <td className="px-4 py-3 text-right font-mono text-sm text-text-muted">{item.reachable_assets}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
