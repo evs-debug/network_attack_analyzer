@@ -69,3 +69,27 @@ class NetworkEdge(BaseModel):
 class NetworkResponse(BaseModel):
     nodes: List[NetworkNode]
     edges: List[NetworkEdge]
+
+
+class NetworkSummary(BaseModel):
+    id: int
+    name: str
+
+
+class NetworkCreateRequest(BaseModel):
+    name: str
+
+
+class NodeCreateRequest(BaseModel):
+    name: str
+    type: str
+    vulnerability_score: int
+    criticality_score: int
+    asset_value: int
+
+
+class EdgeCreateRequest(BaseModel):
+    source_node_id: int
+    target_node_id: int
+    connection_type: str
+    access_level: int
