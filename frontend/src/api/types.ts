@@ -56,6 +56,26 @@ export interface NetworkResponse {
   edges: NetworkEdge[];
 }
 
+export interface NetworkSummary {
+  id: number;
+  name: string;
+}
+
+export interface NodeCreateRequest {
+  name: string;
+  type: string;
+  vulnerability_score: number;
+  criticality_score: number;
+  asset_value: number;
+}
+
+export interface EdgeCreateRequest {
+  source_node_id: number;
+  target_node_id: number;
+  connection_type: string;
+  access_level: number;
+}
+
 // Shape of FastAPI's error response body (HTTPException / validation errors)
 export interface ApiError {
   detail: string | { msg: string; loc: string[] }[];

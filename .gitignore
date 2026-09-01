@@ -10,4 +10,5 @@ venv/
 .DS_Store
 
 # VS Code
-.vscode/*.db
+.vscode/
+*.db

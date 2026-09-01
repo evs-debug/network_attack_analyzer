@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard';
 import CriticalNodes from './pages/CriticalNodes';
 import ShortestPath from './pages/ShortestPath';
 import NetworkGraph from './pages/NetworkGraph';
+import NetworkSelector from './components/NetworkSelector';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `block rounded-md px-3 py-2 text-sm transition-colors ${
@@ -19,6 +20,7 @@ function App() {
           <p className="font-mono text-xs tracking-wide text-text-muted">SECURITY ANALYSIS</p>
           <h1 className="text-lg font-semibold text-text-primary">Network Attack Analyzer</h1>
         </div>
+        <NetworkSelector />
         <nav className="flex flex-col gap-1">
           <NavLink to="/" end className={navLinkClass}>Risk Report</NavLink>
           <NavLink to="/critical-nodes" className={navLinkClass}>Critical Nodes</NavLink>
