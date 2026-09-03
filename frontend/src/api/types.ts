@@ -45,6 +45,7 @@ export interface NetworkNode {
 }
 
 export interface NetworkEdge {
+  id: number;
   source: string;
   target: string;
   connection_type: string;

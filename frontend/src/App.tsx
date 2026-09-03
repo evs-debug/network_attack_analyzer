@@ -4,6 +4,7 @@ import CriticalNodes from './pages/CriticalNodes';
 import ShortestPath from './pages/ShortestPath';
 import NetworkGraph from './pages/NetworkGraph';
 import NetworkSelector from './components/NetworkSelector';
+import NetworkBuilder from './pages/NetworkBuilder';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `block rounded-md px-3 py-2 text-sm transition-colors ${
@@ -26,6 +27,7 @@ function App() {
           <NavLink to="/critical-nodes" className={navLinkClass}>Critical Nodes</NavLink>
           <NavLink to="/shortest-path" className={navLinkClass}>Shortest Path</NavLink>
           <NavLink to="/network" className={navLinkClass}>Network Graph</NavLink>
+          <NavLink to="/builder" className={navLinkClass}>Network Builder</NavLink>
         </nav>
       </aside>
 
@@ -35,6 +37,7 @@ function App() {
           <Route path="/critical-nodes" element={<CriticalNodes />} />
           <Route path="/shortest-path" element={<ShortestPath />} />
           <Route path="/network" element={<NetworkGraph />} />
+          <Route path="/builder" element={<NetworkBuilder />} />
         </Routes>
       </main>
     </div>
