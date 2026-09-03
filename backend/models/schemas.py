@@ -94,3 +94,14 @@ class EdgeCreateRequest(BaseModel):
     target_node_id: int
     connection_type: str
     access_level: int
+
+
+class TemplateSummary(BaseModel):
+    id: str
+    name: str
+    description: str
+
+
+class TemplateInstantiateRequest(BaseModel):
+    template_id: str
+    name: str

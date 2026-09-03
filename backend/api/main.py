@@ -14,6 +14,8 @@ from backend.models.schemas import (
     NetworkCreateRequest,
     NodeCreateRequest,
     EdgeCreateRequest,
+    TemplateSummary,
+    TemplateInstantiateRequest,
 )
 from backend import repository
 
@@ -52,6 +54,7 @@ def create_network(payload: NetworkCreateRequest, db: Session = Depends(get_db))
 
 @app.get("/networks", response_model=List[NetworkSummary])
 def list_networks(db: Session = Depends(get_db)):
+    repository.seed_sample_network(db)
     records = repository.list_networks(db)
     return [{"id": r.id, "name": r.name} for r in records]
 
@@ -155,6 +158,21 @@ def network_shortest_path(
     if result is None:
         raise HTTPException(status_code=404, detail=f"No path found between {start!r} and {target!r}")
     return result
+
+@app.get("/templates", response_model=List[TemplateSummary])
+def list_templates():
+    return repository.list_templates()
+
+
+@app.post("/networks/from-template", response_model=NetworkSummary)
+def create_network_from_template(payload: TemplateInstantiateRequest, db: Session = Depends(get_db)):
+    network_id = repository.instantiate_template(db, payload.template_id, payload.name)
+    if network_id is None:
+        raise HTTPException(status_code=404, detail=f"Unknown template_id: {payload.template_id!r}")
+    record = repository.get_network(db, network_id)
+    return {"id": record.id, "name": record.name}
+
+
 
 
 # ---------------------------------------------------------------------

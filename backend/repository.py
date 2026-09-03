@@ -147,3 +147,106 @@ def seed_sample_network(db: Session) -> int:
         )
 
     return network.id
+
+
+# ---------------------------------------------------------------------
+# Network templates -- pre-built topologies a user can instantiate as
+# a starting point instead of building a network node-by-node.
+# ---------------------------------------------------------------------
+
+TEMPLATES = {
+    "small_office": {
+        "name": "Small Office Network",
+        "description": "Router, firewall, workstations, and a file server -- a typical small business LAN.",
+        "nodes": [
+            ("Internet", "Internet", 1, 1, 1),
+            ("Firewall", "Firewall", 4, 8, 5),
+            ("Office Router", "Router", 5, 6, 4),
+            ("File Server", "Server", 6, 8, 8),
+            ("Workstation 1", "Workstation", 6, 4, 4),
+            ("Workstation 2", "Workstation", 6, 4, 4),
+            ("Printer", "IoT", 7, 2, 2),
+        ],
+        "edges": [
+            ("Internet", "Firewall", "WAN", 1),
+            ("Firewall", "Office Router", "LAN", 2),
+            ("Office Router", "File Server", "SMB", 2),
+            ("Office Router", "Workstation 1", "Ethernet", 2),
+            ("Office Router", "Workstation 2", "Wi-Fi", 2),
+            ("Office Router", "Printer", "Wi-Fi", 1),
+        ],
+    },
+    "cloud_vpc": {
+        "name": "Cloud VPC",
+        "description": "Internet-facing load balancer, web tier, app tier, and a database in a private subnet.",
+        "nodes": [
+            ("Internet", "Internet", 1, 1, 1),
+            ("Load Balancer", "Gateway", 5, 6, 6),
+            ("Web Server 1", "Server", 7, 6, 6),
+            ("Web Server 2", "Server", 7, 6, 6),
+            ("App Server", "Server", 6, 8, 8),
+            ("Database", "Database", 5, 10, 10),
+            ("Bastion Host", "Server", 4, 7, 5),
+        ],
+        "edges": [
+            ("Internet", "Load Balancer", "HTTPS", 1),
+            ("Load Balancer", "Web Server 1", "HTTP", 2),
+            ("Load Balancer", "Web Server 2", "HTTP", 2),
+            ("Web Server 1", "App Server", "REST", 2),
+            ("Web Server 2", "App Server", "REST", 2),
+            ("App Server", "Database", "SQL", 3),
+            ("Internet", "Bastion Host", "SSH", 2),
+            ("Bastion Host", "App Server", "SSH", 3),
+        ],
+    },
+    "home_network": {
+        "name": "Home Network",
+        "description": "Router, laptop, phone, and IoT devices on a typical home Wi-Fi network.",
+        "nodes": [
+            ("Internet", "Internet", 1, 1, 1),
+            ("Home Router", "Router", 6, 5, 4),
+            ("Laptop", "Workstation", 5, 5, 6),
+            ("Phone", "Workstation", 4, 4, 5),
+            ("Smart TV", "IoT", 8, 2, 2),
+            ("Smart Camera", "IoT", 9, 3, 3),
+            ("NAS", "Server", 6, 6, 7),
+        ],
+        "edges": [
+            ("Internet", "Home Router", "WAN", 1),
+            ("Home Router", "Laptop", "Wi-Fi", 2),
+            ("Home Router", "Phone", "Wi-Fi", 2),
+            ("Home Router", "Smart TV", "Wi-Fi", 1),
+            ("Home Router", "Smart Camera", "Wi-Fi", 1),
+            ("Home Router", "NAS", "Ethernet", 2),
+        ],
+    },
+}
+
+
+def list_templates():
+    return [
+        {"id": key, "name": t["name"], "description": t["description"]}
+        for key, t in TEMPLATES.items()
+    ]
+
+
+def instantiate_template(db: Session, template_id: str, network_name: str) -> Optional[int]:
+    template = TEMPLATES.get(template_id)
+    if template is None:
+        return None
+
+    network = create_network(db, network_name)
+
+    name_to_node_id = {}
+    for name, node_type, vuln, crit, asset in template["nodes"]:
+        rec = add_node(db, network.id, name, node_type, vuln, crit, asset)
+        name_to_node_id[name] = rec.id
+
+    for source_name, target_name, connection_type, access_level in template["edges"]:
+        add_edge(
+            db, network.id,
+            name_to_node_id[source_name], name_to_node_id[target_name],
+            connection_type, access_level,
+        )
+
+    return network.id
