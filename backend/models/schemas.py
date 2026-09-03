@@ -12,7 +12,7 @@ Field types were verified against backend/sample_networks/sample_network.py
 than guessed from node.py's lack of type hints.
 """
 
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -60,6 +60,7 @@ class NetworkNode(BaseModel):
 
 
 class NetworkEdge(BaseModel):
+    id: Optional[int] = None
     source: str
     target: str
     connection_type: str

@@ -333,6 +333,7 @@ class AttackGraph:
 
             edges_data.append(
                 {
+                    "id": edge.id,
                     "source": edge.source.name,
                     "target": edge.target.name,
                     "connection_type": edge.connection_type,

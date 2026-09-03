@@ -122,7 +122,7 @@ def load_attack_graph(db: Session, network_id: int) -> AttackGraph:
     for rec in edge_records:
         source = nodes_by_id[rec.source_node_id]
         target = nodes_by_id[rec.target_node_id]
-        graph.add_edge(Edge(source, target, rec.connection_type, rec.access_level))
+        graph.add_edge(Edge(source, target, rec.connection_type, rec.access_level, id=rec.id))
 
     return graph
 

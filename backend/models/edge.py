@@ -4,8 +4,10 @@ class Edge:
         source,
         target,
         connection_type,
-        access_level
+        access_level,
+        id=None
     ):
+        self.id = id
         self.source = source
         self.target = target
         self.connection_type = connection_type
