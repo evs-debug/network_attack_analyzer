@@ -3,6 +3,7 @@ import {
   forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide,
   type SimulationNodeDatum, type SimulationLinkDatum, type Simulation,
 } from 'd3-force';
+import { useNetwork } from '../context/NetworkContext';
 import { api, ApiRequestError } from '../api/client';
 import type { NetworkResponse, NetworkNode } from '../api/types';
 
@@ -37,14 +38,18 @@ export default function NetworkGraph() {
   const [simLinks, setSimLinks] = useState<SimLink[]>([]);
   const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
 
+  const { selectedId } = useNetwork();
+
   useEffect(() => {
-    api.network()
+    if (selectedId == null) return;
+    setLoading(true);
+    api.networkById(selectedId)
       .then(setData)
       .catch((err) => {
         setError(err instanceof ApiRequestError ? err.message : 'Failed to load network');
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [selectedId]);
 
   useEffect(() => {
     if (!data) return;
