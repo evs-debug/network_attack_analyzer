@@ -9,6 +9,7 @@ interface NetworkContextValue {
   selectedId: number | null;
   selectNetwork: (id: number) => void;
   createNetwork: (name: string) => Promise<void>;
+  createFromTemplate: (templateId: string, name: string) => Promise<void>;
   refresh: () => Promise<void>;
   loading: boolean;
 }
@@ -47,8 +48,14 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
     selectNetwork(created.id);
   }
 
+  async function createFromTemplate(templateId: string, name: string) {
+    const created = await api.createNetworkFromTemplate(templateId, name);
+    await refresh();
+    selectNetwork(created.id);
+  }
+
   return (
-    <NetworkContext.Provider value={{ networks, selectedId, selectNetwork, createNetwork, refresh, loading }}>
+    <NetworkContext.Provider value={{ networks, selectedId, selectNetwork, createNetwork, createFromTemplate, refresh, loading }}>
       {children}
     </NetworkContext.Provider>
   );

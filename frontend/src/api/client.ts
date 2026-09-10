@@ -8,6 +8,7 @@ import type {
   NodeCreateRequest,
   EdgeCreateRequest,
   ApiError,
+  TemplateSummary,
 } from './types';
 
 const BASE_URL = 'http://127.0.0.1:8000';
@@ -80,4 +81,8 @@ export const api = {
   criticalNodesFor: (networkId: number) => get<CriticalNodesResponse>(`/networks/${networkId}/critical-nodes`),
   shortestPathFor: (networkId: number, start: string, target: string) =>
     get<ShortestPathResponse>(`/networks/${networkId}/shortest-path?start=${encodeURIComponent(start)}&target=${encodeURIComponent(target)}`),
+
+  listTemplates: () => get<TemplateSummary[]>('/templates'),
+  createNetworkFromTemplate: (templateId: string, name: string) =>
+    post<NetworkSummary>('/networks/from-template', { template_id: templateId, name }),
 };

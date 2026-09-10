@@ -81,3 +81,9 @@ export interface EdgeCreateRequest {
 export interface ApiError {
   detail: string | { msg: string; loc: string[] }[];
 }
+
+export interface TemplateSummary {
+  id: string;
+  name: string;
+  description: string;
+}
