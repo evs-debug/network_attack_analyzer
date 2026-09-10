@@ -1,4 +1,3 @@
-cat > src/components/NetworkSelector.tsx << 'EOF'
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNetwork } from '../context/NetworkContext';
 import { api } from '../api/client';
@@ -128,4 +127,3 @@ export default function NetworkSelector() {
     </div>
   );
 }
-EOF
