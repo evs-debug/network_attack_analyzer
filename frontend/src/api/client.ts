@@ -9,9 +9,22 @@ import type {
   EdgeCreateRequest,
   ApiError,
   TemplateSummary,
+  TokenResponse,
+  UserSummary,
 } from './types';
 
 const BASE_URL = 'http://127.0.0.1:8000';
+const TOKEN_STORAGE_KEY = 'naa_auth_token';
+
+export function getStoredToken(): string | null {
+  return localStorage.getItem(TOKEN_STORAGE_KEY);
+}
+export function setStoredToken(token: string) {
+  localStorage.setItem(TOKEN_STORAGE_KEY, token);
+}
+export function clearStoredToken() {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+}
 
 export class ApiRequestError extends Error {
   status: number;
@@ -30,6 +43,11 @@ function extractErrorMessage(body: ApiError): string {
   return 'Unknown API error';
 }
 
+function authHeaders(): Record<string, string> {
+  const token = getStoredToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 async function handle<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const body: ApiError = await response.json().catch(() => ({ detail: response.statusText }));
@@ -39,21 +57,21 @@ async function handle<T>(response: Response): Promise<T> {
 }
 
 async function get<T>(path: string): Promise<T> {
-  return handle<T>(await fetch(`${BASE_URL}${path}`));
+  return handle<T>(await fetch(`${BASE_URL}${path}`, { headers: { ...authHeaders() } }));
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
   return handle<T>(
     await fetch(`${BASE_URL}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(body),
     })
   );
 }
 
 async function del<T>(path: string): Promise<T> {
-  return handle<T>(await fetch(`${BASE_URL}${path}`, { method: 'DELETE' }));
+  return handle<T>(await fetch(`${BASE_URL}${path}`, { method: 'DELETE', headers: { ...authHeaders() } }));
 }
 
 export const api = {
@@ -67,6 +85,7 @@ export const api = {
 
   listNetworks: () => get<NetworkSummary[]>('/networks'),
   createNetwork: (name: string) => post<NetworkSummary>('/networks', { name }),
+  deleteNetwork: (id: number) => del<NetworkSummary[]>(`/networks/${id}`),
   networkById: (id: number) => get<NetworkResponse>(`/networks/${id}`),
   addNode: (networkId: number, payload: NodeCreateRequest) =>
     post<NetworkResponse>(`/networks/${networkId}/nodes`, payload),
@@ -82,9 +101,11 @@ export const api = {
   shortestPathFor: (networkId: number, start: string, target: string) =>
     get<ShortestPathResponse>(`/networks/${networkId}/shortest-path?start=${encodeURIComponent(start)}&target=${encodeURIComponent(target)}`),
 
-  deleteNetwork: (id: number) => del<NetworkSummary[]>(`/networks/${id}`),
-
   listTemplates: () => get<TemplateSummary[]>('/templates'),
   createNetworkFromTemplate: (templateId: string, name: string) =>
     post<NetworkSummary>('/networks/from-template', { template_id: templateId, name }),
+
+  signup: (email: string, password: string) => post<TokenResponse>('/auth/signup', { email, password }),
+  login: (email: string, password: string) => post<TokenResponse>('/auth/login', { email, password }),
+  me: () => get<UserSummary>('/auth/me'),
 };

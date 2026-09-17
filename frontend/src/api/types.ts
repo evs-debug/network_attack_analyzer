@@ -87,3 +87,13 @@ export interface TemplateSummary {
   name: string;
   description: string;
 }
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface UserSummary {
+  id: number;
+  email: string;
+}
