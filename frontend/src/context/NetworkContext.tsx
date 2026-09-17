@@ -10,6 +10,7 @@ interface NetworkContextValue {
   selectNetwork: (id: number) => void;
   createNetwork: (name: string) => Promise<void>;
   createFromTemplate: (templateId: string, name: string) => Promise<void>;
+  deleteNetwork: (id: number) => Promise<void>;
   refresh: () => Promise<void>;
   loading: boolean;
 }
@@ -54,8 +55,17 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
     selectNetwork(created.id);
   }
 
+  async function deleteNetwork(id: number) {
+    const updated = await api.deleteNetwork(id);
+    setNetworks(updated);
+    setSelectedId((current) => {
+      if (current !== id) return current;
+      return updated.length > 0 ? updated[0].id : null;
+    });
+  }
+
   return (
-    <NetworkContext.Provider value={{ networks, selectedId, selectNetwork, createNetwork, createFromTemplate, refresh, loading }}>
+    <NetworkContext.Provider value={{ networks, selectedId, selectNetwork, createNetwork, createFromTemplate, deleteNetwork, refresh, loading }}>
       {children}
     </NetworkContext.Provider>
   );

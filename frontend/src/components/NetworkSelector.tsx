@@ -6,7 +6,7 @@ import type { TemplateSummary } from '../api/types';
 type Mode = 'closed' | 'blank' | 'template';
 
 export default function NetworkSelector() {
-  const { networks, selectedId, selectNetwork, createNetwork, createFromTemplate, loading } = useNetwork();
+  const { networks, selectedId, selectNetwork, createNetwork, createFromTemplate, deleteNetwork, loading } = useNetwork();
   const [mode, setMode] = useState<Mode>('closed');
   const [newName, setNewName] = useState('');
   const [templates, setTemplates] = useState<TemplateSummary[]>([]);
@@ -65,6 +65,20 @@ export default function NetworkSelector() {
           <option key={n.id} value={n.id}>{n.name}</option>
         ))}
       </select>
+
+      {selectedId != null && (
+        <button
+          onClick={() => {
+            const name = networks.find((n) => n.id === selectedId)?.name ?? 'this network';
+            if (window.confirm(`Delete "${name}"? This removes all its nodes and edges permanently.`)) {
+              deleteNetwork(selectedId);
+            }
+          }}
+          className="mt-1 text-xs text-risk-high hover:underline"
+        >
+          Delete this network
+        </button>
+      )}
 
       {mode === 'closed' && (
         <div className="mt-2 flex flex-col gap-1">

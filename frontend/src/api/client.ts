@@ -82,6 +82,8 @@ export const api = {
   shortestPathFor: (networkId: number, start: string, target: string) =>
     get<ShortestPathResponse>(`/networks/${networkId}/shortest-path?start=${encodeURIComponent(start)}&target=${encodeURIComponent(target)}`),
 
+  deleteNetwork: (id: number) => del<NetworkSummary[]>(`/networks/${id}`),
+
   listTemplates: () => get<TemplateSummary[]>('/templates'),
   createNetworkFromTemplate: (templateId: string, name: string) =>
     post<NetworkSummary>('/networks/from-template', { template_id: templateId, name }),
