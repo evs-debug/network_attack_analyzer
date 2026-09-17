@@ -67,6 +67,14 @@ def get_network(network_id: int, db: Session = Depends(get_db)):
     return graph.network_data()
 
 
+@app.delete("/networks/{network_id}", response_model=List[NetworkSummary])
+def delete_network(network_id: int, db: Session = Depends(get_db)):
+    if not repository.delete_network(db, network_id):
+        raise HTTPException(status_code=404, detail=f"Network {network_id} not found")
+    records = repository.list_networks(db)
+    return [{"id": r.id, "name": r.name} for r in records]
+
+
 @app.post("/networks/{network_id}/nodes", response_model=NetworkResponse)
 def add_node(network_id: int, payload: NodeCreateRequest, db: Session = Depends(get_db)):
     if repository.get_network(db, network_id) is None:

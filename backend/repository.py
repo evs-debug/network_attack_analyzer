@@ -43,6 +43,17 @@ def get_network(db: Session, network_id: int) -> Optional[NetworkRecord]:
     return db.query(NetworkRecord).filter(NetworkRecord.id == network_id).first()
 
 
+def delete_network(db: Session, network_id: int) -> bool:
+    record = db.query(NetworkRecord).filter(NetworkRecord.id == network_id).first()
+    if record is None:
+        return False
+    # cascade="all, delete-orphan" on NetworkRecord.nodes/edges means
+    # this also removes every node and edge belonging to the network.
+    db.delete(record)
+    db.commit()
+    return True
+
+
 def add_node(
     db: Session, network_id: int, name: str, node_type: str,
     vulnerability_score: int, criticality_score: int, asset_value: int,
