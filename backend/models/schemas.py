@@ -105,3 +105,23 @@ class TemplateSummary(BaseModel):
 class TemplateInstantiateRequest(BaseModel):
     template_id: str
     name: str
+
+
+class SignupRequest(BaseModel):
+    email: str
+    password: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class UserSummary(BaseModel):
+    id: int
+    email: str

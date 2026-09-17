@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from backend.db_models import NetworkRecord, NodeRecord, EdgeRecord
+from backend.db_models import NetworkRecord, NodeRecord, EdgeRecord, UserRecord
 from backend.models.node import Node
 from backend.models.edge import Edge
 from backend.models.graph import AttackGraph
@@ -27,16 +27,43 @@ _SAMPLE_EDGES = [
 ]
 
 
-def create_network(db: Session, name: str) -> NetworkRecord:
-    record = NetworkRecord(name=name)
+def create_network(db: Session, name: str, owner_id: Optional[int] = None) -> NetworkRecord:
+    record = NetworkRecord(name=name, owner_id=owner_id)
     db.add(record)
     db.commit()
     db.refresh(record)
     return record
 
 
-def list_networks(db: Session) -> List[NetworkRecord]:
-    return db.query(NetworkRecord).order_by(NetworkRecord.id).all()
+def list_networks(db: Session, current_user_id: Optional[int] = None) -> List[NetworkRecord]:
+    # Visible = public networks (owner_id is None, e.g. the seeded
+    # Sample Network) plus the current user's own networks, if any.
+    # This governs what shows up in a user's network list -- it is
+    # NOT an access-control check on the other endpoints (get/edit/
+    # delete by id still work for anyone with the id; see repository
+    # module docstring / auth.py comments for that known limitation).
+    query = db.query(NetworkRecord)
+    if current_user_id is None:
+        return query.filter(NetworkRecord.owner_id.is_(None)).order_by(NetworkRecord.id).all()
+    return query.filter(
+        (NetworkRecord.owner_id.is_(None)) | (NetworkRecord.owner_id == current_user_id)
+    ).order_by(NetworkRecord.id).all()
+
+
+def create_user(db: Session, email: str, hashed_password: str) -> UserRecord:
+    record = UserRecord(email=email, hashed_password=hashed_password)
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+    return record
+
+
+def get_user_by_email(db: Session, email: str) -> Optional[UserRecord]:
+    return db.query(UserRecord).filter(UserRecord.email == email).first()
+
+
+def get_user_by_id(db: Session, user_id: int) -> Optional[UserRecord]:
+    return db.query(UserRecord).filter(UserRecord.id == user_id).first()
 
 
 def get_network(db: Session, network_id: int) -> Optional[NetworkRecord]:

@@ -16,8 +16,13 @@ from backend.models.schemas import (
     EdgeCreateRequest,
     TemplateSummary,
     TemplateInstantiateRequest,
+    SignupRequest,
+    LoginRequest,
+    TokenResponse,
+    UserSummary,
 )
 from backend import repository
+from backend import auth
 
 Base.metadata.create_all(bind=engine)
 
@@ -47,16 +52,57 @@ def home():
 # ---------------------------------------------------------------------
 
 @app.post("/networks", response_model=NetworkSummary)
-def create_network(payload: NetworkCreateRequest, db: Session = Depends(get_db)):
-    record = repository.create_network(db, payload.name)
+def create_network(
+    payload: NetworkCreateRequest,
+    db: Session = Depends(get_db),
+    current_user_id: int | None = Depends(auth.get_current_user_id),
+):
+    record = repository.create_network(db, payload.name, owner_id=current_user_id)
     return {"id": record.id, "name": record.name}
 
 
 @app.get("/networks", response_model=List[NetworkSummary])
-def list_networks(db: Session = Depends(get_db)):
+def list_networks(
+    db: Session = Depends(get_db),
+    current_user_id: int | None = Depends(auth.get_current_user_id),
+):
     repository.seed_sample_network(db)
-    records = repository.list_networks(db)
+    records = repository.list_networks(db, current_user_id=current_user_id)
     return [{"id": r.id, "name": r.name} for r in records]
+
+
+# ---------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------
+
+@app.post("/auth/signup", response_model=TokenResponse)
+def signup(payload: SignupRequest, db: Session = Depends(get_db)):
+    if repository.get_user_by_email(db, payload.email) is not None:
+        raise HTTPException(status_code=400, detail="An account with this email already exists")
+    hashed = auth.hash_password(payload.password)
+    user = repository.create_user(db, payload.email, hashed)
+    token = auth.create_access_token(user.id)
+    return {"access_token": token}
+
+
+@app.post("/auth/login", response_model=TokenResponse)
+def login(payload: LoginRequest, db: Session = Depends(get_db)):
+    user = repository.get_user_by_email(db, payload.email)
+    if user is None or not auth.verify_password(payload.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    token = auth.create_access_token(user.id)
+    return {"access_token": token}
+
+
+@app.get("/auth/me", response_model=UserSummary)
+def me(
+    db: Session = Depends(get_db),
+    current_user_id: int = Depends(auth.require_current_user_id),
+):
+    user = repository.get_user_by_id(db, current_user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"id": user.id, "email": user.email}
 
 
 @app.get("/networks/{network_id}", response_model=NetworkResponse)

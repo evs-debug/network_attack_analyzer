@@ -5,11 +5,23 @@ from sqlalchemy.sql import func
 from backend.db import Base
 
 
+class UserRecord(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, nullable=False, unique=True, index=True)
+    hashed_password = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class NetworkRecord(Base):
     __tablename__ = "networks"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    # Nullable: a network with no owner (the seeded Sample Network) is
+    # public and visible to everyone, logged in or not.
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     nodes = relationship("NodeRecord", back_populates="network", cascade="all, delete-orphan")
