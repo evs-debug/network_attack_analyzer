@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import CriticalNodes from './pages/CriticalNodes';
@@ -7,8 +8,11 @@ import NetworkSelector from './components/NetworkSelector';
 import NetworkBuilder from './pages/NetworkBuilder';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Landing from './pages/Landing';
 import RequireAuth from './components/RequireAuth';
 import { useAuth } from './context/AuthContext';
+
+const SEEN_LANDING_KEY = 'naa_seen_landing';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `block rounded-md px-3 py-2 text-sm transition-colors ${
@@ -63,11 +67,36 @@ function AppShell() {
   );
 }
 
+// The root path shows the landing page once per browser session (a
+// sessionStorage flag, not a login-gated thing -- an already-logged-in
+// user who reopens the tab still sees it once). "Get Started"/"Start
+// Now" marks it seen; if they're already authenticated this just
+// re-renders straight into the app, otherwise it sends them to log in.
+function RootGate() {
+  const [seen, setSeen] = useState(() => sessionStorage.getItem(SEEN_LANDING_KEY) === '1');
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  function handleStart() {
+    sessionStorage.setItem(SEEN_LANDING_KEY, '1');
+    setSeen(true);
+    if (!user) navigate('/login');
+  }
+
+  if (!seen) return <Landing onStart={handleStart} />;
+  return (
+    <RequireAuth>
+      <AppShell />
+    </RequireAuth>
+  );
+}
+
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/" element={<RootGate />} />
       <Route
         path="/*"
         element={
