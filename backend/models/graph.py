@@ -309,6 +309,37 @@ class AttackGraph:
             "impact": self.count_reachable_nodes(critical)
         }
 
+    def compromise_simulation(self, start_node):
+        """BFS from start_node over directed edges, returning the order
+        in which each node becomes reachable -- an attacker moving
+        outward from a single entry point -- along with the edge used
+        to reach it, so the frontend can animate a step-by-step
+        compromise sequence rather than just show a final count.
+        """
+        visited = {start_node}
+        queue = [start_node]
+        order = [{"name": start_node.name, "step": 0, "via_edge": None}]
+        step = 0
+
+        while queue:
+            current = queue.pop(0)
+            for neighbor in self.adjacency_list[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    step += 1
+                    connection_type = next(
+                        (e.connection_type for e in self.edges if e.source == current and e.target == neighbor),
+                        None,
+                    )
+                    order.append({
+                        "name": neighbor.name,
+                        "step": step,
+                        "via_edge": {"source": current.name, "connection_type": connection_type},
+                    })
+                    queue.append(neighbor)
+
+        return order
+
     def network_data(self):
 
         nodes_data = []

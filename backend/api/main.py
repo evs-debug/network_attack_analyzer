@@ -20,6 +20,7 @@ from backend.models.schemas import (
     LoginRequest,
     TokenResponse,
     UserSummary,
+    CompromiseStep,
 )
 from backend import repository
 from backend import auth
@@ -227,6 +228,24 @@ def create_network_from_template(payload: TemplateInstantiateRequest, db: Sessio
     return {"id": record.id, "name": record.name}
 
 
+
+
+@app.get("/networks/{network_id}/compromise-simulation", response_model=List[CompromiseStep])
+def network_compromise_simulation(
+    network_id: int,
+    start: str = Query(..., min_length=1),
+    db: Session = Depends(get_db),
+):
+    if repository.get_network(db, network_id) is None:
+        raise HTTPException(status_code=404, detail=f"Network {network_id} not found")
+    graph = repository.load_attack_graph(db, network_id)
+
+    nodes_by_name = {node.name: node for node in graph.nodes}
+    start_node = nodes_by_name.get(start)
+    if not start_node:
+        raise HTTPException(status_code=404, detail=f"Invalid start node name: {start!r}")
+
+    return graph.compromise_simulation(start_node)
 
 
 # ---------------------------------------------------------------------

@@ -125,3 +125,14 @@ class TokenResponse(BaseModel):
 class UserSummary(BaseModel):
     id: int
     email: str
+
+
+class CompromiseEdge(BaseModel):
+    source: str
+    connection_type: Optional[str] = None
+
+
+class CompromiseStep(BaseModel):
+    name: str
+    step: int
+    via_edge: Optional[CompromiseEdge] = None
