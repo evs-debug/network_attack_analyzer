@@ -11,6 +11,7 @@ import type {
   TemplateSummary,
   TokenResponse,
   UserSummary,
+  CompromiseStep,
 } from './types';
 
 const BASE_URL = 'http://127.0.0.1:8000';
@@ -102,6 +103,8 @@ export const api = {
     get<ShortestPathResponse>(`/networks/${networkId}/shortest-path?start=${encodeURIComponent(start)}&target=${encodeURIComponent(target)}`),
 
   listTemplates: () => get<TemplateSummary[]>('/templates'),
+
+  compromiseSimulationFor: (networkId: number, start: string) => get<CompromiseStep[]>(`/networks/${networkId}/compromise-simulation?start=${encodeURIComponent(start)}`),
   createNetworkFromTemplate: (templateId: string, name: string) =>
     post<NetworkSummary>('/networks/from-template', { template_id: templateId, name }),
 

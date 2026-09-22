@@ -97,3 +97,14 @@ export interface UserSummary {
   id: number;
   email: string;
 }
+
+export interface CompromiseEdge {
+  source: string;
+  connection_type: string | null;
+}
+
+export interface CompromiseStep {
+  name: string;
+  step: number;
+  via_edge: CompromiseEdge | null;
+}

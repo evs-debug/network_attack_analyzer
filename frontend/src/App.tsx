@@ -6,6 +6,7 @@ import ShortestPath from './pages/ShortestPath';
 import NetworkGraph from './pages/NetworkGraph';
 import NetworkSelector from './components/NetworkSelector';
 import NetworkBuilder from './pages/NetworkBuilder';
+import CompromiseSimulation from './pages/CompromiseSimulation';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Landing from './pages/Landing';
@@ -44,6 +45,7 @@ function AppShell() {
           <NavLink to="/shortest-path" className={navLinkClass}>Shortest Path</NavLink>
           <NavLink to="/network" className={navLinkClass}>Network Graph</NavLink>
           <NavLink to="/builder" className={navLinkClass}>Network Builder</NavLink>
+          <NavLink to="/compromise" className={navLinkClass}>Compromise Simulation</NavLink>
         </nav>
 
         <div className="mt-auto border-t border-panel-border px-3 pt-4">
@@ -61,6 +63,7 @@ function AppShell() {
           <Route path="/shortest-path" element={<ShortestPath />} />
           <Route path="/network" element={<NetworkGraph />} />
           <Route path="/builder" element={<NetworkBuilder />} />
+          <Route path="/compromise" element={<CompromiseSimulation />} />
         </Routes>
       </main>
     </div>
